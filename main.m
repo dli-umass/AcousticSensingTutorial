@@ -4,6 +4,7 @@ close all;
 %% Add path
 addpath('soundwave_generation');
 addpath('traditional_estimation');
+addpath('super_estimation');
 %% Parametes for FMCW signals
 Vs = 343;                   % Sound velocity
 Fs = 44100;                 % Sampling frequency
@@ -41,6 +42,7 @@ paras.multipath.num_of_mps = num_of_mps;
 % ------ flag for display ------
 display_flag = true;
 paras.algos.display_flag = display_flag;
+paras.algos.display_flag_gt = display_flag_gt; 
 
 wave_len = Vs/(Fc+B);
 % ------ aoa ------
@@ -71,7 +73,16 @@ fprintf('------ Traditional Estimation  ------\n');
 fprintf('- FFT Distance -\n');
 mix_sw = squeeze(array_mix_sw(:,1,:));
 trad_dist_FFT(mix_sw,paras);
-%% Traditional Estimation
-fprintf('------ Tranditional Estimation ------\n');
+% ------ Distance + Velocity ------
+fprintf('- FFT Distance -\n');
 mix_sw = squeeze(array_mix_sw(:,4,:));
 trad_dist_vel_FFT(mix_sw,paras);
+%% Super-resolution Estimation
+% ------ distance estimation -----
+fprintf('------ distance estimation by MUSIC ------\n');
+mix_sw = squeeze(array_mix_sw(:,1,1));
+super_dist(mix_sw, paras);
+%% ------ distance + aoa estimation -----
+fprintf('------ distance + AoA estimation by 2D MUSIC ------\n');
+mix_sw = squeeze(array_mix_sw(:,:,1));
+super_dist_aoa(mix_sw.', paras);
